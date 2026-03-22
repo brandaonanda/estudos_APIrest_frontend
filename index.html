@@ -1,0 +1,105 @@
+<!DOCTYPE html> <!-- define que é um documento HTML5 -->
+<html> <!-- início do HTML -->
+
+<head> <!-- cabeçalho da página -->
+    <title>API CRUD</title> <!-- título da aba -->
+</head>
+
+<body> <!-- corpo da página -->
+
+<h1>Equipamentos</h1> <!-- título principal -->
+
+<!-- botão para buscar todos os dados -->
+<button onclick="buscar()">Buscar todos</button> <!-- chama função buscar -->
+
+<!-- campo para buscar por ID -->
+<input id="buscar_id" placeholder="ID para buscar"> <!-- input para digitar id -->
+<button onclick="buscarPorId()">Buscar por ID</button> <!-- botão que chama função -->
+
+<!-- área onde os dados serão exibidos -->
+<pre id="resultado"></pre> <!-- mostra JSON formatado -->
+
+<hr> <!-- linha separadora -->
+
+<h2>Criar Equipamento</h2> <!-- título da seção -->
+
+<input id="id" placeholder="ID"> <!-- campo para id -->
+<input id="nome" placeholder="Nome"> <!-- campo para nome -->
+<input id="status" placeholder="Status"> <!-- campo para status -->
+<button onclick="criar()">Criar</button> <!-- botão que chama função criar -->
+
+<hr> <!-- separador -->
+
+<h2>Atualizar Equipamento</h2> <!-- título -->
+<input id="id_update" placeholder="ID"> <!-- id a atualizar -->
+<input id="nome_update" placeholder="Novo nome"> <!-- novo nome -->
+<input id="status_update" placeholder="Novo status"> <!-- novo status -->
+<button onclick="atualizar()">Atualizar</button> <!-- chama função atualizar -->
+
+<hr> <!-- separador -->
+
+<h2>Deletar Equipamento</h2> <!-- título -->
+<input id="id_delete" placeholder="ID"> <!-- id a deletar -->
+<button onclick="deletar()">Deletar</button> <!-- chama função deletar -->
+
+<script> <!-- início do JavaScript -->
+
+function buscar() { // função para buscar todos
+    fetch("http://127.0.0.1:8000/equipamentos") // chama API GET
+        .then(res => res.json()) // converte resposta para JSON
+        .then(data => { // recebe os dados
+            document.getElementById("resultado").textContent = JSON.stringify(data, null, 2); // mostra na tela
+        });
+}
+
+function buscarPorId() { // função para buscar por ID
+    const id = document.getElementById("buscar_id").value; // pega valor do input
+    fetch(`http://127.0.0.1:8000/equipamentos/${id}`) // chama API com ID
+        .then(res => res.json()) // converte para JSON
+        .then(data => { // recebe dados
+            document.getElementById("resultado").textContent = JSON.stringify(data, null, 2); // mostra
+        });
+}
+
+function criar() { // função para criar novo
+    const id = document.getElementById("id").value; // pega id
+    const nome = document.getElementById("nome").value; // pega nome
+    const status = document.getElementById("status").value; // pega status
+
+    fetch("http://127.0.0.1:8000/equipamentos", { // chama API POST
+        method: "POST", // método POST
+        headers: { "Content-Type": "application/json" }, // define JSON
+        body: JSON.stringify({ id: Number(id), nome, status }) // envia dados
+    })
+    .then(res => res.json()) // converte resposta
+    .then(data => alert("Criado!")); // alerta sucesso
+}
+
+function atualizar() { // função atualizar
+    const id = document.getElementById("id_update").value; // pega id
+    const nome = document.getElementById("nome_update").value; // novo nome
+    const status = document.getElementById("status_update").value; // novo status
+
+    fetch(`http://127.0.0.1:8000/equipamentos/${id}`, { // chama API PUT
+        method: "PUT", // método PUT
+        headers: { "Content-Type": "application/json" }, // tipo JSON
+        body: JSON.stringify({ id: Number(id), nome, status }) // envia dados
+    })
+    .then(res => res.json()) // converte resposta
+    .then(data => alert("Atualizado!")); // alerta
+}
+
+function deletar() { // função deletar
+    const id = document.getElementById("id_delete").value; // pega id
+
+    fetch(`http://127.0.0.1:8000/equipamentos/${id}`, { // chama API DELETE
+        method: "DELETE" // método DELETE
+    })
+    .then(res => res.json()) // converte resposta
+    .then(data => alert("Deletado!")); // alerta
+}
+
+</script> <!-- fim do JS -->
+
+</body> <!-- fim do body -->
+</html> <!-- fim do HTML -->
